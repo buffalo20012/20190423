@@ -1,14 +1,13 @@
 package kr.hs.dgsw.web01blog.Domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,15 +17,24 @@ public class Post {
     private Long id;
 
     private Long userId;
+
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
 
-    private String filepath;
-    private String filename;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    private List<Attachment> pictures;
 
     @CreationTimestamp
+    @Column(updatable = false,nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
+
     @UpdateTimestamp
-    private LocalDateTime modified;
+    @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updated;
 
     //  default constructor
     public Post() {
@@ -35,11 +43,11 @@ public class Post {
     public Post(Post post){
         this.id = post.getId();
         this.userId = post.getUserId();
+        this.title = post.getTitle();
         this.content = post.getContent();
+        this.pictures = post.getPictures();
         this.created = post.getCreated();
-        this.modified = post.getModified();
-        this.filename = post.getFilename();
-        this.filepath = post.getFilepath();
+        this.updated = post.getUpdated();
     }
 
     public Long getId() {
@@ -58,6 +66,14 @@ public class Post {
         this.userId = userId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
     }
@@ -66,20 +82,12 @@ public class Post {
         this.content = content;
     }
 
-    public String getFilepath() {
-        return filepath;
+    public List<Attachment> getPictures() {
+        return pictures;
     }
 
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setPictures(List<Attachment> pictures) {
+        this.pictures = pictures;
     }
 
     public LocalDateTime getCreated() {
@@ -90,11 +98,11 @@ public class Post {
         this.created = created;
     }
 
-    public LocalDateTime getModified() {
-        return modified;
+    public LocalDateTime getUpdated() {
+        return updated;
     }
 
-    public void setModified(LocalDateTime modified) {
-        this.modified = modified;
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 }

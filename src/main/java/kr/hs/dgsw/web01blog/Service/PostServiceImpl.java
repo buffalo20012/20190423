@@ -7,8 +7,6 @@ import kr.hs.dgsw.web01blog.Repository.PostRepository;
 import kr.hs.dgsw.web01blog.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,12 +40,12 @@ public class PostServiceImpl implements PostService{
 
         if(found.isPresent()){
             post.setId(found.get().getId());
+            post.setPictures(found.get().getPictures());
             post.setContent(found.get().getContent());
             post.setUserId(found.get().getUserId());
-            post.setFilename(found.get().getFilename());
-            post.setFilepath(found.get().getFilepath());
             post.setCreated(found.get().getCreated());
-            post.setModified(found.get().getModified());
+            post.setTitle(found.get().getTitle());
+            post.setUpdated(found.get().getUpdated());
         }
 
         Optional<User> user = this.userRepository.findById(post.getUserId());
@@ -72,10 +70,15 @@ public class PostServiceImpl implements PostService{
     public Post UpdatePost(Long id, Post post) {
         return this.postRepository.findById(id).map(found ->{
             found.setContent(Optional.ofNullable(post.getContent()).orElse(found.getContent()));
-            found.setFilename(Optional.ofNullable(post.getFilename()).orElse(found.getFilename()));
-            found.setFilepath(Optional.ofNullable(post.getFilepath()).orElse(found.getFilepath()));
+            found.setTitle(Optional.ofNullable(post.getTitle()).orElse(found.getTitle()));
+            found.setPictures(Optional.ofNullable(post.getPictures()).orElse(found.getPictures()));
             return this.postRepository.save(found);
         }).orElse(null);
+    }
+
+    @Override
+    public Post Get(Long userId) {
+        return this.postRepository.findTopByUserIdOrderByIdDesc(userId).orElse(null);
     }
 
     @Override

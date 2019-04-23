@@ -52,11 +52,23 @@ Content-Type: application/json
 
 {
   "userId": "1",
-  "content": "content111"
+  "content": "content111",
+  "title" : "title111"
 }
 ###
 
+PUT http://localhost:8080/updatepost/1
+Content-Type: application/json
 
+{
+  "content": "content222"
+}
+
+###
+
+DELETE http://localhost:8080/deletepost/1
+
+###
 
 
 
